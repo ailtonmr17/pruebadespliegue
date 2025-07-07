@@ -7,14 +7,36 @@
 </head>
 <body>
   <div class="container mt-5">
-    <h1 class="mb-4">Datos Personales</h1>
+    <h1 class="mb-4">Datos Personales de Juan Perez</h1>
     <?php
-      // Conexión a la base de datos
-      $conexion = mysqli_connect(getenv('MYSQL_HOST'), getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD'), "UNS");
+      // Conexión a la base de datos 'prueba'
+      $conexion = mysqli_connect(
+        getenv('34.71.232.220'),
+        getenv('root'),
+        getenv(''),
+        "pruebas"
+      );
 
-      // Consulta solo para Juan Perez
-      $cadenaSQL = "SELECT nombre, historial_crediticio, direccion, ciudad, provincia, pais, codigo_postal 
-                    FROM cliente WHERE nombre = 'Juan Perez' LIMIT 1";
+      if (!$conexion) {
+        echo "<div class='alert alert-danger'>Error de conexión: " . mysqli_connect_error() . "</div>";
+        exit();
+      }
+
+      // Consulta JOIN para Juan Perez
+      $cadenaSQL = "
+        SELECT 
+          dp.nombre,
+          dp.apellido,
+          dp.fecha_nac,
+          dp.numero,
+          dp.direccion,
+          p.origen,
+          p.ocupacion
+        FROM detalle_persona dp
+        JOIN persona p ON dp.id_persona = p.id_persona
+        WHERE dp.nombre = 'Juan' AND dp.apellido = 'Perez'
+        LIMIT 1
+      ";
 
       $resultado = mysqli_query($conexion, $cadenaSQL);
 
@@ -22,13 +44,12 @@
         echo "<div class='card'>";
         echo "<div class='card-header bg-primary text-white'>Información de Juan Perez</div>";
         echo "<div class='card-body'>";
-        echo "<p><strong>Nombre:</strong> " . htmlspecialchars($fila['nombre']) . "</p>";
-        echo "<p><strong>Historial Crediticio:</strong> " . htmlspecialchars($fila['historial_crediticio']) . "</p>";
+        echo "<p><strong>Nombre:</strong> " . htmlspecialchars($fila['nombre']) . " " . htmlspecialchars($fila['apellido']) . "</p>";
+        echo "<p><strong>Fecha de Nacimiento:</strong> " . htmlspecialchars($fila['fecha_nac']) . "</p>";
+        echo "<p><strong>Número:</strong> " . htmlspecialchars($fila['numero']) . "</p>";
         echo "<p><strong>Dirección:</strong> " . htmlspecialchars($fila['direccion']) . "</p>";
-        echo "<p><strong>Ciudad:</strong> " . htmlspecialchars($fila['ciudad']) . "</p>";
-        echo "<p><strong>Provincia:</strong> " . htmlspecialchars($fila['provincia']) . "</p>";
-        echo "<p><strong>País:</strong> " . htmlspecialchars($fila['pais']) . "</p>";
-        echo "<p><strong>Código Postal:</strong> " . htmlspecialchars($fila['codigo_postal']) . "</p>";
+        echo "<p><strong>Origen:</strong> " . htmlspecialchars($fila['origen']) . "</p>";
+        echo "<p><strong>Ocupación:</strong> " . htmlspecialchars($fila['ocupacion']) . "</p>";
         echo "</div></div>";
       } else {
         echo "<div class='alert alert-warning'>No se encontraron datos para Juan Perez.</div>";
